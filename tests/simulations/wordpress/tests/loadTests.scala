@@ -36,6 +36,6 @@ class SearchScenario extends Simulation {
 	val RunSearchScenario= scenario("Run Search").exec(AuthPage.login, SearchPage.search_for_term)
 
 	setUp(
-		RunSearchScenario.inject(rampUsers(100) over (60 seconds)),
+		RunSearchScenario.inject(rampUsers(10) over (60 seconds)),
 	).protocols(httpProtocol).assertions(global.responseTime.max.lt(1200))
 }

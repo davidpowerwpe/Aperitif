@@ -8,6 +8,7 @@ import io.gatling.jdbc.Predef._
 
 object SearchPage {
 
+
     //read in from search.csv
     val feeder = csv("search.csv").random
 
@@ -16,18 +17,18 @@ object SearchPage {
    			.get("/"))
    			.pause(1)
     		.feed(feeder) // 3	
-	        .exec(http("run_search")
+	        .exec(http("run_search_${searchCriterion}")
 			.post("/wp-admin/admin-ajax.php")
 			.headers(Map(
-			"Accept" -> "*/*",
-			"Content-Type" -> "application/x-www-form-urlencoded; charset=UTF-8",
-			"X-Requested-With" -> "XMLHttpRequest"))
-			.formParam("_ajax_nonce", "6906464983")
-			.formParam("s", "Dolly")
+				"Accept" -> "*/*",
+				"Content-Type" -> "application/x-www-form-urlencoded; charset=UTF-8",
+				"X-Requested-With" -> "XMLHttpRequest"))
+			.formParam("_ajax_nonce", "217e3d9c02")
+			.formParam("s", "${searchCriterion}")
 			.formParam("tab", "search")
 			.formParam("type", "term")
 			.formParam("pagenow", "plugin-install")
 			.formParam("action", "search-install-plugins")
 			.check(bodyBytes.is(RawFileBody("SearchScenario_0001_response.txt"))))
-		.pause(6)
+	    	.pause(6)
 }
