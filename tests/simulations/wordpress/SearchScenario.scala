@@ -10,25 +10,20 @@ import io.gatling.jdbc.Predef._
 
 object Search{
 
+    //read in from search.csv
     val feeder = csv("search.csv").random // 1, 2
 
- 	val headers_1 = Map(
-		"Accept" -> "*/*",
-		"Content-Type" -> "application/x-www-form-urlencoded; charset=UTF-8",
-		"X-Requested-With" -> "XMLHttpRequest")
-
-	val navigate =  exec(http("navigate")
-			.get("/wp-admin/plugin-install.php")
-			.headers(Map("Upgrade-Insecure-Requests" -> "1")))
-		.pause(15)
-
+	//Search for term
 	val search_for_term = exec(http("Home")
    			.get("/"))
    			.pause(1)
     		.feed(feeder) // 3	
 	        .exec(http("run_search")
 			.post("/wp-admin/admin-ajax.php")
-			.headers(headers_1)
+			.headers(Map(
+			"Accept" -> "*/*",
+			"Content-Type" -> "application/x-www-form-urlencoded; charset=UTF-8",
+			"X-Requested-With" -> "XMLHttpRequest"))
 			.formParam("_ajax_nonce", "6906464983")
 			.formParam("s", "Dolly")
 			.formParam("tab", "search")
@@ -49,7 +44,7 @@ class SearchScenario extends Simulation {
 		.acceptLanguageHeader("en-US,en;q=0.5")
 		.userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0")
 
-	val RunSearchScenario= scenario("Run Search").exec(Auth.login,Search.navigate)
+	val RunSearchScenario= scenario("Run Search").exec(Auth.login,Search.search_for_term)
 
 	setUp(
 		RunSearchScenario.inject(rampUsers(100) over (60 seconds)),
