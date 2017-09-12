@@ -1,14 +1,12 @@
 package wordpress
 
 import scala.concurrent.duration._
-
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
-
 import io.gatling.jdbc.Predef._
 
-object Search {
+object SearchPage {
 
     //read in from search.csv
     val feeder = csv("search.csv").random
@@ -33,21 +31,3 @@ object Search {
 			.check(bodyBytes.is(RawFileBody("SearchScenario_0001_response.txt"))))
 		.pause(6)
 }
-
-class SearchScenario extends Simulation {
-
-	val httpProtocol = http
-		.baseURL("http://localhost:8080")
-		.inferHtmlResources(BlackList(""".*\css""", """.*\.js""", """.*\.ico"""), WhiteList())
-		.acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-		.acceptEncodingHeader("gzip, deflate")
-		.acceptLanguageHeader("en-US,en;q=0.5")
-		.userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0")
-
-	val RunSearchScenario= scenario("Run Search").exec(Auth.login,Search.search_for_term)
-
-	setUp(
-		RunSearchScenario.inject(rampUsers(100) over (60 seconds)),
-	).protocols(httpProtocol).assertions(global.responseTime.max.lt(1200))
-}
-
