@@ -43,23 +43,24 @@ object PostsPage {
 		"X-Requested-With" -> "XMLHttpRequest")
 
 	// ListPosts
-	val view = exec(http("Navigate To Posts")
-		.get("/wp-admin/edit.php")
-		.headers(Map("Upgrade-Insecure-Requests" -> "1"))
-		.pause(3 seconds, 5 seconds)
-
-	def gotoPage(page: Int) = exec(http("Post Page " + page)
-		.get("/wp-admin/edit.php?paged=" + page))
-		.pause(3 seconds, 5 seconds)
-				
+	val view = exec(
+		http("Navigate To Posts")
+			.get("/wp-admin/edit.php")
+			.headers(Map("Upgrade-Insecure-Requests" -> "1"))
+	).pause(3 seconds, 5 seconds)
+	// Itterate over 
 	var view_first_ten_pages = exec(
-		repeat(10, counter) {
-			gotoPage(counter)
+		repeat(10, "page") {
+			// println("Page: ${page}")
+			exec(http("Post Page ${page}")
+				.get("/wp-admin/edit.php?paged=${page}")
+				.check(currentLocation.is("http://localhost:8080/wp-admin/edit.php?paged=${page}"))
+		).pause(3 seconds, 5 seconds)
 		}
 	)
 }
 
-class Posts extends Simulation {
+class LoadTestForPostRead extends Simulation {
 
 	val httpConfig = http
 		.baseURL("http://localhost:8080")
@@ -69,9 +70,9 @@ class Posts extends Simulation {
 		.acceptLanguageHeader("en-GB,en;q=0.5")
 		.userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0")
 
-	val ViewPostsScenario = scenario("Review 10 Posts").exec(AuthPage.login, PostsPage.view, PostsPage.view_first_ten_pages)
+	val ViewPostsScenario = scenario("Review 10 Post Pages").exec(AuthPage.login, PostsPage.view, PostsPage.view_first_ten_pages)
 
 	setUp(
-		ViewPostsScenario.inject(rampUsers(100) over (2 minutes)),
+		ViewPostsScenario.inject(rampUsers(75) over (1 minutes)),
 	).protocols(httpConfig)
 }
