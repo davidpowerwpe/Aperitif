@@ -73,6 +73,6 @@ class LoadTestForPostRead extends Simulation {
 	val ViewPostsScenario = scenario("Review 10 Post Pages").exec(AuthPage.login, PostsPage.view, PostsPage.view_first_ten_pages)
 
 	setUp(
-		ViewPostsScenario.inject(rampUsers(75) over (1 minutes)),
-	).protocols(httpConfig)
+		ViewPostsScenario.inject(rampUsers(70) over (1 minutes)),
+	).protocols(httpConfig).assertions(global.responseTime.max.lt(1300))
 }
