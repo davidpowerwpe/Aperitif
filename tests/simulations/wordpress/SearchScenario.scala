@@ -1,4 +1,4 @@
-package gatlingTest
+package wordpress
 
 import scala.concurrent.duration._
 
@@ -8,10 +8,10 @@ import io.gatling.jdbc.Predef._
 
 import io.gatling.jdbc.Predef._
 
-object Search{
+object Search {
 
     //read in from search.csv
-    val feeder = csv("search.csv").random // 1, 2
+    val feeder = csv("search.csv").random
 
 	//Search for term
 	val search_for_term = exec(http("Home")
