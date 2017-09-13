@@ -6,7 +6,12 @@ import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 import io.gatling.jdbc.Predef._
 
+
 object Config {
+   val globalTimeOut = 1000
+   val pageResponeTimeOut = 500
+   val logintTimeOut = 500
+
 	val httpConfig = http
 		.baseURL("http://localhost:8080")
 		.inferHtmlResources(BlackList(""".*\.css""", """.*\.js""", """.*\.ico"""), WhiteList())
@@ -21,9 +26,9 @@ class VolumeTestPostRead extends Simulation {
 
 	setUp(
 		ViewPostsScenario.inject(rampUsers(50) over (1 minutes))).protocols(Config.httpConfig)
-		    .assertions(details("Login"/"Try User Login").responseTime.max.lt(300))
-			.assertions(details("Page").responseTime.max.lt(300))
-			.assertions(forAll.responseTime.max.lt(800))
+		    .assertions(details("Login"/"Try User Login").responseTime.max.lt(Config.logintTimeOut))
+			.assertions(details("Page").responseTime.max.lt(Config.pageResponeTimeOut))
+			.assertions(forAll.responseTime.max.lt(Config.globalTimeOut))
 			.assertions(global.failedRequests.percent.is(0))
 }
 
@@ -32,8 +37,8 @@ class StressTestPostRead extends Simulation {
 
 	setUp(
 		ViewPostsScenario.inject(rampUsers(60) over (1 minutes))).protocols(Config.httpConfig)
-		    .assertions(details("Login"/"Try User Login").responseTime.max.lt(1000))
-			.assertions(details("Page"/"Change Page").responseTime.max.lt(1000))
-			.assertions(forAll.responseTime.max.lt(800))
+		    .assertions(details("Login"/"Try User Login").responseTime.max.lt(Config.logintTimeOut))
+			.assertions(details("Page"/"Change Page").responseTime.max.lt(Config.pageResponeTimeOut))
+			.assertions(forAll.responseTime.max.lt(Config.globalTimeOut))
 			.assertions(global.failedRequests.percent.is(0))
 }
