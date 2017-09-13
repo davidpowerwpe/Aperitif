@@ -20,6 +20,7 @@ class VolumeTestPostRead extends Simulation {
 	val ViewPostsScenario = scenario("Review 10 Post Pages Per User").exec(AuthPage.login, PostsPage.view, PostsPage.view_first_ten_pages)
 
 	setUp(
-		ViewPostsScenario.inject(rampUsers(70) over (1 minutes))
-	).protocols(Config.httpConfig).assertions(global.responseTime.max.lt(1300))
+		ViewPostsScenario.inject(rampUsers(50) over (1 minutes))).protocols(Config.httpConfig)
+			.assertions(forAll.responseTime.max.lt(800))
+			.assertions(global.failedRequests.percent.is(0))
 }
