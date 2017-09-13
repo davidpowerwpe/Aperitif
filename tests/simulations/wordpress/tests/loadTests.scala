@@ -21,6 +21,19 @@ class VolumeTestPostRead extends Simulation {
 
 	setUp(
 		ViewPostsScenario.inject(rampUsers(50) over (1 minutes))).protocols(Config.httpConfig)
+		    .assertions(details("Login"/"Try User Login").responseTime.max.lt(300))
+			.assertions(details("Page").responseTime.max.lt(300))
+			.assertions(forAll.responseTime.max.lt(800))
+			.assertions(global.failedRequests.percent.is(0))
+}
+
+class StressTestPostRead extends Simulation {
+	val ViewPostsScenario = scenario("Review 10 Post Pages Per User").exec(AuthPage.login, PostsPage.view, PostsPage.stress_view_first_ten_pages)
+
+	setUp(
+		ViewPostsScenario.inject(rampUsers(50) over (1 minutes))).protocols(Config.httpConfig)
+		    .assertions(details("Login"/"Try User Login").responseTime.max.lt(300))
+			.assertions(details("Page"/"Change Page").responseTime.max.lt(300))
 			.assertions(forAll.responseTime.max.lt(800))
 			.assertions(global.failedRequests.percent.is(0))
 }

@@ -32,5 +32,21 @@ object PostsPage {
 			}
 		}
 	)
+
+		// Itterate over 
+	var stress_view_first_ten_pages = exec(
+		repeat(10, "page")
+		{
+			group("StressPage")
+			{
+				exec(http("Change Page to ${page}")
+					.get("/wp-admin/edit.php?paged=${page}")
+					.check(currentLocation.is("http://localhost:8080/wp-admin/edit.php?paged=${page}"))
+				).exitHereIfFailed
+				.pause(3 seconds, 5 seconds)
+				//add response time 
+			}
+		}
+	)
 }
 
