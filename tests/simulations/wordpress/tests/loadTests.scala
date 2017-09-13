@@ -31,9 +31,9 @@ class StressTestPostRead extends Simulation {
 	val ViewPostsScenario = scenario("Stress: Review 10 Post Pages Per User").exec(AuthPage.login, PostsPage.view, PostsPage.stress_view_first_ten_pages)
 
 	setUp(
-		ViewPostsScenario.inject(rampUsers(500) over (10 minutes))).protocols(Config.httpConfig)
-		    .assertions(details("Login"/"Try User Login").responseTime.max.lt(300))
-			.assertions(details("Page"/"Change Page").responseTime.max.lt(300))
+		ViewPostsScenario.inject(rampUsers(60) over (1 minutes))).protocols(Config.httpConfig)
+		    .assertions(details("Login"/"Try User Login").responseTime.max.lt(1000))
+			.assertions(details("Page"/"Change Page").responseTime.max.lt(1000))
 			.assertions(forAll.responseTime.max.lt(800))
 			.assertions(global.failedRequests.percent.is(0))
 }
