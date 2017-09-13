@@ -42,6 +42,7 @@ object PostsPage {
 				exec(http("Change Page to ${page}")
 					.get("/wp-admin/edit.php?paged=${page}")
 					.check(currentLocation.is("http://localhost:8080/wp-admin/edit.php?paged=${page}"))
+					.check(responseTimeInMillis.lessThan(300))
 				).exitHereIfFailed
 				.pause(3 seconds, 5 seconds)
 				//add response time 
