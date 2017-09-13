@@ -17,7 +17,7 @@ object Config {
 }
 
 class VolumeTestPostRead extends Simulation {
-	val ViewPostsScenario = scenario("Review 10 Post Pages").exec(AuthPage.login, PostsPage.view, PostsPage.view_first_ten_pages)
+	val ViewPostsScenario = scenario("Review 10 Post Pages Per User").exec(AuthPage.login, PostsPage.view, PostsPage.view_first_ten_pages)
 
 	setUp(
 		ViewPostsScenario.inject(rampUsers(70) over (1 minutes))

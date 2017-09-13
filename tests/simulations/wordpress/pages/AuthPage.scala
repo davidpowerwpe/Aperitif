@@ -9,17 +9,20 @@ import io.gatling.jdbc.Predef._
 object AuthPage {
 	var header_auth = Map("Upgrade-Insecure-Requests" -> "1")
 	// Login
-	val login = exec(
-		http("Login")
-			.post("/wp-login.php")
-			.headers(header_auth)
-			.formParam("log", "gatling1")
-			.formParam("pwd", "gatling1")
-			.formParam("wp-submit", "Log In")
-			.formParam("redirect_to", "http://localhost:8080/wp-admin/")
-			.formParam("testcookie", "1")
-	).pause(1 second, 3 seconds)
-
+	val login = group("Login")
+		{
+			exec(
+				http("Try User Login")
+					.post("/wp-login.php")
+					.headers(header_auth)
+					.formParam("log", "gatling1")
+					.formParam("pwd", "gatling1")
+					.formParam("wp-submit", "Log In")
+					.formParam("redirect_to", "http://localhost:8080/wp-admin/")
+					.formParam("testcookie", "1")
+			).pause(1 second, 3 seconds)
+		}
+	
     // Find the logout URL as it contains a validation token required for logout
 	var get_logout_url = exec(
 		http("Get Logout URL")

@@ -18,14 +18,18 @@ object PostsPage {
 			.get("/wp-admin/edit.php")
 			.headers(Map("Upgrade-Insecure-Requests" -> "1"))
 	).pause(3 seconds, 5 seconds)
+	
 	// Itterate over 
 	var view_first_ten_pages = exec(
-		repeat(10, "page") {
-			// println("Page: ${page}")
-			exec(http("Post Page ${page}")
-				.get("/wp-admin/edit.php?paged=${page}")
-				.check(currentLocation.is("http://localhost:8080/wp-admin/edit.php?paged=${page}"))
-		).pause(3 seconds, 5 seconds)
+		repeat(10, "page")
+		{
+			group("Page")
+			{
+				exec(http("Change Page to ${page}")
+					.get("/wp-admin/edit.php?paged=${page}")
+					.check(currentLocation.is("http://localhost:8080/wp-admin/edit.php?paged=${page}"))
+				).pause(3 seconds, 5 seconds)
+			}
 		}
 	)
 }
